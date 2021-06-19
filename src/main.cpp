@@ -46,7 +46,7 @@ int LED_RED_P10 = 28;
 // ─── FUNCTION ───────────────────────────────────────────────────────────────────
 //
 
-int test(int valueGood, int valueFair, int valueReel)
+int sensorLevel(int valueGood, int valueFair, int valueReel)
 {
   if (valueReel <= valueGood)
   {
@@ -115,20 +115,20 @@ void loop()
     lcd.setCursor(0, 3);
     lcd.print("CO2:   " + String(100) + " ppm");
 
-    int toto = test(10, 20, p25);
-    if (toto == 0)
+    int sensorStatus = sensorLevel(10, 20, p25);
+    if (sensorStatus == 0)
     {
       digitalWrite(LED_RED_P25, LOW);
       digitalWrite(LED_YELLOW_P25, LOW);
       digitalWrite(LED_GREEN_P25, HIGH);
     };
-    if (toto == 1)
+    if (sensorStatus == 1)
     {
       digitalWrite(LED_RED_P25, LOW);
       digitalWrite(LED_GREEN_P25, LOW);
       digitalWrite(LED_YELLOW_P25, HIGH);
     };
-    if (toto == 2)
+    if (sensorStatus == 2)
     {
       digitalWrite(LED_GREEN_P25, LOW);
       digitalWrite(LED_YELLOW_P25, LOW);
