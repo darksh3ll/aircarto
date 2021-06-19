@@ -37,6 +37,10 @@ int GREEN = 22;
 int YELLOW = 24;
 int RED = 26;
 
+//
+// ─── FUNCTION ───────────────────────────────────────────────────────────────────
+//
+
 void setup()
 {
   Serial.begin(BAUDRATE);
