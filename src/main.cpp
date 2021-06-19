@@ -126,20 +126,22 @@ void loop()
     lcd.setCursor(0, 3);
     lcd.print("CO2:   " + String(100) + " ppm");
 
-    int sensorStatus = sensorLevel(10, 20, p25);
-    if (sensorStatus == GOOD)
+    int sensorPm25Status = sensorLevel(10, 20, p25);
+    int sensorPm10Status = sensorLevel(50, 80, p10);
+
+    if (sensorPm25Status == GOOD)
     {
       digitalWrite(LED_RED_P25, LOW);
       digitalWrite(LED_YELLOW_P25, LOW);
       digitalWrite(LED_GREEN_P25, HIGH);
     };
-    if (sensorStatus == FAIR)
+    if (sensorPm25Status == FAIR)
     {
       digitalWrite(LED_RED_P25, LOW);
       digitalWrite(LED_GREEN_P25, LOW);
       digitalWrite(LED_YELLOW_P25, HIGH);
     };
-    if (sensorStatus == DANGER)
+    if (sensorPm25Status == DANGER)
     {
       digitalWrite(LED_GREEN_P25, LOW);
       digitalWrite(LED_YELLOW_P25, LOW);
