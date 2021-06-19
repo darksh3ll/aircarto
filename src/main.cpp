@@ -43,6 +43,17 @@ int LED_YELLOW_P10 = 26;
 int LED_RED_P10 = 28;
 
 //
+// ─── ENUM ───────────────────────────────────────────────────────────────────────
+//
+
+enum NIVEAU
+{
+  GOOD,
+  FAIR,
+  DANGER
+};
+
+//
 // ─── FUNCTION ───────────────────────────────────────────────────────────────────
 //
 
@@ -50,15 +61,15 @@ int sensorLevel(int valueGood, int valueFair, int valueReel)
 {
   if (valueReel <= valueGood)
   {
-    return 0;
+    return GOOD;
   }
   else if (valueReel > valueGood && valueReel <= valueFair)
   {
-    return 1;
+    return FAIR;
   }
   else
   {
-    return 2;
+    return DANGER;
   }
 }
 
@@ -116,19 +127,19 @@ void loop()
     lcd.print("CO2:   " + String(100) + " ppm");
 
     int sensorStatus = sensorLevel(10, 20, p25);
-    if (sensorStatus == 0)
+    if (sensorStatus == GOOD)
     {
       digitalWrite(LED_RED_P25, LOW);
       digitalWrite(LED_YELLOW_P25, LOW);
       digitalWrite(LED_GREEN_P25, HIGH);
     };
-    if (sensorStatus == 1)
+    if (sensorStatus == FAIR)
     {
       digitalWrite(LED_RED_P25, LOW);
       digitalWrite(LED_GREEN_P25, LOW);
       digitalWrite(LED_YELLOW_P25, HIGH);
     };
-    if (sensorStatus == 2)
+    if (sensorStatus == DANGER)
     {
       digitalWrite(LED_GREEN_P25, LOW);
       digitalWrite(LED_YELLOW_P25, LOW);
