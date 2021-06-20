@@ -38,9 +38,9 @@ int LED_YELLOW_P25 = 24;
 int LED_RED_P25 = 26;
 
 //led pm10
-int LED_GREEN_P10 = 24;
-int LED_YELLOW_P10 = 26;
-int LED_RED_P10 = 28;
+int LED_GREEN_P10 = 28;
+int LED_YELLOW_P10 = 30;
+int LED_RED_P10 = 32;
 
 //
 // ─── ENUM ───────────────────────────────────────────────────────────────────────
@@ -71,7 +71,29 @@ int sensorLevel(int valueGood, int valueFair, int valueReel)
   {
     return DANGER;
   }
-}
+};
+
+void lightLed(int led)
+{
+  if (led == GOOD)
+  {
+    digitalWrite(led, LOW);
+    digitalWrite(led, LOW);
+    digitalWrite(led, HIGH);
+  };
+  if (led == FAIR)
+  {
+    digitalWrite(led, LOW);
+    digitalWrite(led, LOW);
+    digitalWrite(led, HIGH);
+  };
+  if (led == DANGER)
+  {
+    digitalWrite(led, LOW);
+    digitalWrite(led, LOW);
+    digitalWrite(led, HIGH);
+  }
+};
 
 void setup()
 {
@@ -80,6 +102,10 @@ void setup()
   pinMode(LED_GREEN_P25, OUTPUT);
   pinMode(LED_YELLOW_P25, OUTPUT);
   pinMode(LED_RED_P25, OUTPUT);
+
+  pinMode(LED_GREEN_P10, OUTPUT);
+  pinMode(LED_YELLOW_P10, OUTPUT);
+  pinMode(LED_RED_P10, OUTPUT);
   my_sds.begin(10, 11);
   lcd.init();
   lcd.init();
@@ -128,6 +154,12 @@ void loop()
 
     int sensorPm25Status = sensorLevel(10, 20, p25);
     int sensorPm10Status = sensorLevel(50, 80, p10);
+    // lightLed(sensorPm25Status);
+    // lightLed(sensorPm10Status);
+
+    //
+    // ─── P25 ─────────────────────────────────────────────────────────
+    //
 
     if (sensorPm25Status == GOOD)
     {
@@ -146,6 +178,38 @@ void loop()
       digitalWrite(LED_GREEN_P25, LOW);
       digitalWrite(LED_YELLOW_P25, LOW);
       digitalWrite(LED_RED_P25, HIGH);
+    }
+
+    //
+    // ─── P10 ────────────────────────────────────────────────────────────────────────
+    //
+
+    if (sensorPm10Status == GOOD)
+    {
+      digitalWrite(LED_RED_P10, LOW);
+      digitalWrite(LED_YELLOW_P10, LOW);
+      digitalWrite(LED_GREEN_P10, HIGH);
+    };
+    if (sensorPm10Status == FAIR)
+    {
+      digitalWrite(LED_RED_P10, LOW);
+      digitalWrite(LED_GREEN_P10, LOW);
+      digitalWrite(LED_YELLOW_P10, HIGH);
+    };
+    if (sensorPm10Status == DANGER)
+    {
+      digitalWrite(LED_GREEN_P10, LOW);
+      digitalWrite(LED_YELLOW_P10, LOW);
+      digitalWrite(LED_RED_P10, HIGH);
+    }
+    if (sensorPm25Status == DANGER && sensorPm10Status == DANGER)
+    {
+      digitalWrite(BUZZER_PIN, HIGH);
+      delay(1000);
+      digitalWrite(BUZZER_PIN, LOW);
+      lcd.clear();
+      lcd.print("DANGER POLLUTION");
+      delay(2000);
     }
   }
   delay(200);
