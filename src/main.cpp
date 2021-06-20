@@ -157,11 +157,6 @@ void loop()
     // lightLed(sensorPm25Status);
     // lightLed(sensorPm10Status);
 
-    if (sensorPm25Status == DANGER && sensorPm10Status == DANGER)
-    {
-      /* code */
-    }
-
     //
     // ─── P25 ─────────────────────────────────────────────────────────
     //
@@ -206,6 +201,15 @@ void loop()
       digitalWrite(LED_GREEN_P10, LOW);
       digitalWrite(LED_YELLOW_P10, LOW);
       digitalWrite(LED_RED_P10, HIGH);
+    }
+    if (sensorPm25Status == DANGER && sensorPm10Status == DANGER)
+    {
+      digitalWrite(BUZZER_PIN, HIGH);
+      delay(1000);
+      digitalWrite(BUZZER_PIN, LOW);
+      lcd.clear();
+      lcd.print("DANGER POLLUTION");
+      delay(2000);
     }
   }
   delay(200);
