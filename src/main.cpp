@@ -42,6 +42,16 @@ int LED_GREEN_P10 = 28;
 int LED_YELLOW_P10 = 30;
 int LED_RED_P10 = 32;
 
+//led temperature
+int LED_GREEN_TEMPERATURE = 34;
+int LED_YELLOW_TEMPERATURE = 36;
+int LED_RED_TEMPERATURE = 38;
+
+//led HUMLIDITY
+int LED_GREEN_HUMIDITY = 40;
+int LED_YELLOW_HUMIDITY = 42;
+int LED_RED_HUMIDITY = 44;
+
 //
 // ─── ENUM ───────────────────────────────────────────────────────────────────────
 //
@@ -94,6 +104,51 @@ void lightLed(int led)
     digitalWrite(led, HIGH);
   }
 };
+// check température
+int checkTemperature(int temp)
+{
+  if (temp >= 18 && temp <= 22)
+  {
+    digitalWrite(LED_RED_TEMPERATURE, LOW);
+    digitalWrite(LED_YELLOW_TEMPERATURE, LOW);
+    digitalWrite(LED_GREEN_TEMPERATURE, HIGH);
+  }
+  else if (temp >= 16 && temp <= 29)
+  {
+    digitalWrite(LED_RED_TEMPERATURE, LOW);
+    digitalWrite(LED_GREEN_TEMPERATURE, LOW);
+    digitalWrite(LED_YELLOW_TEMPERATURE, HIGH);
+  }
+  else
+  {
+    digitalWrite(LED_GREEN_TEMPERATURE, LOW);
+    digitalWrite(LED_YELLOW_TEMPERATURE, LOW);
+    digitalWrite(LED_RED_TEMPERATURE, HIGH);
+  }
+}
+
+// check humidity
+int checkHumidity(int hum)
+{
+  if (hum >= 45 && hum <= 55)
+  {
+    digitalWrite(LED_RED_HUMIDITY, LOW);
+    digitalWrite(LED_YELLOW_HUMIDITY, LOW);
+    digitalWrite(LED_GREEN_HUMIDITY, HIGH);
+  }
+  else if (hum >= 40 && hum <= 44)
+  {
+    digitalWrite(LED_RED_HUMIDITY, LOW);
+    digitalWrite(LED_GREEN_HUMIDITY, LOW);
+    digitalWrite(LED_YELLOW_HUMIDITY, HIGH);
+  }
+  else
+  {
+    digitalWrite(LED_GREEN_HUMIDITY, LOW);
+    digitalWrite(LED_YELLOW_HUMIDITY, LOW);
+    digitalWrite(LED_RED_HUMIDITY, HIGH);
+  }
+}
 
 void setup()
 {
@@ -106,6 +161,14 @@ void setup()
   pinMode(LED_GREEN_P10, OUTPUT);
   pinMode(LED_YELLOW_P10, OUTPUT);
   pinMode(LED_RED_P10, OUTPUT);
+
+  pinMode(LED_GREEN_TEMPERATURE, OUTPUT);
+  pinMode(LED_YELLOW_TEMPERATURE, OUTPUT);
+  pinMode(LED_RED_TEMPERATURE, OUTPUT);
+
+  pinMode(LED_GREEN_HUMIDITY, OUTPUT);
+  pinMode(LED_YELLOW_HUMIDITY, OUTPUT);
+  pinMode(LED_RED_HUMIDITY, OUTPUT);
   my_sds.begin(10, 11);
   lcd.init();
   lcd.init();
@@ -156,6 +219,8 @@ void loop()
     int sensorPm10Status = sensorLevel(50, 80, p10);
     // lightLed(sensorPm25Status);
     // lightLed(sensorPm10Status);
+    checkTemperature(int(temperature));
+    checkHumidity(int(humidity));
 
     //
     // ─── P25 ─────────────────────────────────────────────────────────
