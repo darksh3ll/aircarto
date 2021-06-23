@@ -110,7 +110,7 @@ int sensorLevel(int valueGood, int valueFair, int valueReel)
 // ─── CHECK TEMPERATURE ──────────────────────────────────────────────────────────
 //
 
-int checkTemperature(int temp)
+void checkTemperature(int temp)
 {
   if (temp >= 18 && temp <= 22)
   {
@@ -139,7 +139,7 @@ int checkTemperature(int temp)
 // ─── CHECK HUMIDITY ─────────────────────────────────────────────────────────────
 //
 
-int checkHumidity(int hum)
+void checkHumidity(int hum)
 {
   if (hum >= 45 && hum <= 55)
   {
@@ -162,7 +162,7 @@ int checkHumidity(int hum)
         LED_YELLOW_HUMIDITY,
         LED_RED_HUMIDITY);
   }
-}
+};
 
 void setup()
 {
