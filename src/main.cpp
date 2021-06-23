@@ -69,6 +69,27 @@ enum NIVEAU
 // ─── FUNCTION ───────────────────────────────────────────────────────────────────
 //
 
+void turnOnLedGreen(int sensorsLedGreen, int sensorsLedYellow, int sensorsLedRed)
+{
+  digitalWrite(sensorsLedGreen, HIGH);
+  digitalWrite(sensorsLedYellow, LOW);
+  digitalWrite(sensorsLedRed, LOW);
+};
+
+void turnOnLedYellow(int sensorsLedGreen, int sensorsLedYellow, int sensorsLedRed)
+{
+  digitalWrite(sensorsLedGreen, LOW);
+  digitalWrite(sensorsLedYellow, HIGH);
+  digitalWrite(sensorsLedRed, LOW);
+};
+
+void turnOnLedRed(int sensorsLedGreen, int sensorsLedYellow, int sensorsLedRed)
+{
+  digitalWrite(sensorsLedGreen, LOW);
+  digitalWrite(sensorsLedYellow, LOW);
+  digitalWrite(sensorsLedRed, HIGH);
+};
+
 int sensorLevel(int valueGood, int valueFair, int valueReel)
 {
   if (valueReel <= valueGood)
@@ -93,21 +114,24 @@ int checkTemperature(int temp)
 {
   if (temp >= 18 && temp <= 22)
   {
-    digitalWrite(LED_RED_TEMPERATURE, LOW);
-    digitalWrite(LED_YELLOW_TEMPERATURE, LOW);
-    digitalWrite(LED_GREEN_TEMPERATURE, HIGH);
+    turnOnLedGreen(
+        LED_GREEN_TEMPERATURE,
+        LED_YELLOW_TEMPERATURE,
+        LED_RED_TEMPERATURE);
   }
   else if (temp >= 16 && temp <= 29)
   {
-    digitalWrite(LED_RED_TEMPERATURE, LOW);
-    digitalWrite(LED_GREEN_TEMPERATURE, LOW);
-    digitalWrite(LED_YELLOW_TEMPERATURE, HIGH);
+    turnOnLedYellow(
+        LED_GREEN_TEMPERATURE,
+        LED_YELLOW_TEMPERATURE,
+        LED_RED_TEMPERATURE);
   }
   else
   {
-    digitalWrite(LED_GREEN_TEMPERATURE, LOW);
-    digitalWrite(LED_YELLOW_TEMPERATURE, LOW);
-    digitalWrite(LED_RED_TEMPERATURE, HIGH);
+    turnOnLedRed(
+        LED_GREEN_TEMPERATURE,
+        LED_YELLOW_TEMPERATURE,
+        LED_RED_TEMPERATURE);
   }
 }
 
@@ -119,21 +143,24 @@ int checkHumidity(int hum)
 {
   if (hum >= 45 && hum <= 55)
   {
-    digitalWrite(LED_RED_HUMIDITY, LOW);
-    digitalWrite(LED_YELLOW_HUMIDITY, LOW);
-    digitalWrite(LED_GREEN_HUMIDITY, HIGH);
+    turnOnLedGreen(
+        LED_GREEN_HUMIDITY,
+        LED_YELLOW_HUMIDITY,
+        LED_RED_HUMIDITY);
   }
   else if (hum >= 40 && hum <= 44)
   {
-    digitalWrite(LED_RED_HUMIDITY, LOW);
-    digitalWrite(LED_GREEN_HUMIDITY, LOW);
-    digitalWrite(LED_YELLOW_HUMIDITY, HIGH);
+    turnOnLedYellow(
+        LED_GREEN_HUMIDITY,
+        LED_YELLOW_HUMIDITY,
+        LED_RED_HUMIDITY);
   }
   else
   {
-    digitalWrite(LED_GREEN_HUMIDITY, LOW);
-    digitalWrite(LED_YELLOW_HUMIDITY, LOW);
-    digitalWrite(LED_RED_HUMIDITY, HIGH);
+    turnOnLedRed(
+        LED_GREEN_HUMIDITY,
+        LED_YELLOW_HUMIDITY,
+        LED_RED_HUMIDITY);
   }
 }
 
@@ -244,21 +271,24 @@ void loop()
 
     if (sensorPm25Status == GOOD)
     {
-      digitalWrite(LED_RED_P25, LOW);
-      digitalWrite(LED_YELLOW_P25, LOW);
-      digitalWrite(LED_GREEN_P25, HIGH);
+      turnOnLedGreen(
+          LED_GREEN_P25,
+          LED_YELLOW_P25,
+          LED_RED_P25);
     };
     if (sensorPm25Status == FAIR)
     {
-      digitalWrite(LED_RED_P25, LOW);
-      digitalWrite(LED_GREEN_P25, LOW);
-      digitalWrite(LED_YELLOW_P25, HIGH);
+      turnOnLedYellow(
+          LED_GREEN_P25,
+          LED_YELLOW_P25,
+          LED_RED_P25);
     };
     if (sensorPm25Status == DANGER)
     {
-      digitalWrite(LED_GREEN_P25, LOW);
-      digitalWrite(LED_YELLOW_P25, LOW);
-      digitalWrite(LED_RED_P25, HIGH);
+      turnOnLedRed(
+          LED_GREEN_P25,
+          LED_YELLOW_P25,
+          LED_RED_P25);
     }
 
     //
@@ -267,21 +297,24 @@ void loop()
 
     if (sensorPm10Status == GOOD)
     {
-      digitalWrite(LED_RED_P10, LOW);
-      digitalWrite(LED_YELLOW_P10, LOW);
-      digitalWrite(LED_GREEN_P10, HIGH);
+      turnOnLedGreen(
+          LED_GREEN_P10,
+          LED_YELLOW_P10,
+          LED_RED_P10);
     };
     if (sensorPm10Status == FAIR)
     {
-      digitalWrite(LED_RED_P10, LOW);
-      digitalWrite(LED_GREEN_P10, LOW);
-      digitalWrite(LED_YELLOW_P10, HIGH);
+      turnOnLedYellow(
+          LED_GREEN_P10,
+          LED_YELLOW_P10,
+          LED_RED_P10);
     };
     if (sensorPm10Status == DANGER)
     {
-      digitalWrite(LED_GREEN_P10, LOW);
-      digitalWrite(LED_YELLOW_P10, LOW);
-      digitalWrite(LED_RED_P10, HIGH);
+      turnOnLedRed(
+          LED_GREEN_P10,
+          LED_YELLOW_P10,
+          LED_RED_P10);
     }
     delay(2000);
 
