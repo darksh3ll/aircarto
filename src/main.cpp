@@ -212,8 +212,6 @@ void loop()
   if (!error)
   {
 
-    // Serial.println("P2.5: " + String(p25));
-    // Serial.println("P10:  " + String(p10));
     lcd.setCursor(0, 0);
     lcd.print("PM2.5: " + String(p25, 1) + "(ug/m3)");
     lcd.setCursor(0, 1);
