@@ -10,6 +10,8 @@
 #include "MHZ19.h"
 #include <SoftwareSerial.h>
 
+bool runningBuzzer = false;
+
 //
 // ─── DEFINE PIN ─────────────────────────────────────────────────────────────────
 //
@@ -83,28 +85,10 @@ int sensorLevel(int valueGood, int valueFair, int valueReel)
   }
 };
 
-void lightLed(int led)
-{
-  if (led == GOOD)
-  {
-    digitalWrite(led, LOW);
-    digitalWrite(led, LOW);
-    digitalWrite(led, HIGH);
-  };
-  if (led == FAIR)
-  {
-    digitalWrite(led, LOW);
-    digitalWrite(led, LOW);
-    digitalWrite(led, HIGH);
-  };
-  if (led == DANGER)
-  {
-    digitalWrite(led, LOW);
-    digitalWrite(led, LOW);
-    digitalWrite(led, HIGH);
-  }
-};
-// check température
+//
+// ─── CHECK TEMPERATURE ──────────────────────────────────────────────────────────
+//
+
 int checkTemperature(int temp)
 {
   if (temp >= 18 && temp <= 22)
@@ -127,7 +111,10 @@ int checkTemperature(int temp)
   }
 }
 
-// check humidity
+//
+// ─── CHECK HUMIDITY ─────────────────────────────────────────────────────────────
+//
+
 int checkHumidity(int hum)
 {
   if (hum >= 45 && hum <= 55)
@@ -153,19 +140,37 @@ int checkHumidity(int hum)
 void setup()
 {
   Serial.begin(BAUDRATE);
+  //
+  // ─── PIN BUZZER ─────────────────────────────────────────────────────────────────────
+  //
+
   pinMode(BUZZER_PIN, OUTPUT);
+
+  //
+  // ─── PIN LED P25 ────────────────────────────────────────────────────────────────
+  //
+
   pinMode(LED_GREEN_P25, OUTPUT);
   pinMode(LED_YELLOW_P25, OUTPUT);
   pinMode(LED_RED_P25, OUTPUT);
+  //
+  // ─── PIN LED P10 ────────────────────────────────────────────────────────────────
+  //
 
   pinMode(LED_GREEN_P10, OUTPUT);
   pinMode(LED_YELLOW_P10, OUTPUT);
   pinMode(LED_RED_P10, OUTPUT);
 
+  //
+  // ─── PIN LED TEMPERATURE ────────────────────────────────────────────────────────────────
+  //
   pinMode(LED_GREEN_TEMPERATURE, OUTPUT);
   pinMode(LED_YELLOW_TEMPERATURE, OUTPUT);
   pinMode(LED_RED_TEMPERATURE, OUTPUT);
 
+  //
+  // ─── PIN LED HUMIDITY ────────────────────────────────────────────────────────────────
+  //
   pinMode(LED_GREEN_HUMIDITY, OUTPUT);
   pinMode(LED_YELLOW_HUMIDITY, OUTPUT);
   pinMode(LED_RED_HUMIDITY, OUTPUT);
@@ -200,8 +205,8 @@ void loop()
   if (!error)
   {
 
-    Serial.println("P2.5: " + String(p25));
-    Serial.println("P10:  " + String(p10));
+    // Serial.println("P2.5: " + String(p25));
+    // Serial.println("P10:  " + String(p10));
     lcd.setCursor(0, 0);
     lcd.print("PM2.5: " + String(p25, 1) + "(ug/m3)");
     lcd.setCursor(0, 1);
@@ -217,13 +222,19 @@ void loop()
 
     int sensorPm25Status = sensorLevel(10, 20, p25);
     int sensorPm10Status = sensorLevel(50, 80, p10);
-    // lightLed(sensorPm25Status);
-    // lightLed(sensorPm10Status);
+
+    //
+    // ─── CHECK TEMPERATURE ──────────────────────────────────────────────────────────
+    //
+
     checkTemperature(int(temperature));
+    //
+    // ─── CHECK HUMIDITY ──────────────────────────────────────────────────────────
+    //
     checkHumidity(int(humidity));
 
     //
-    // ─── P25 ─────────────────────────────────────────────────────────
+    // ─── SENSORS P25 ─────────────────────────────────────────────────────────
     //
 
     if (sensorPm25Status == GOOD)
@@ -246,7 +257,7 @@ void loop()
     }
 
     //
-    // ─── P10 ────────────────────────────────────────────────────────────────────────
+    // ───SENSORS P10 ────────────────────────────────────────────────────────────────────────
     //
 
     if (sensorPm10Status == GOOD)
@@ -267,15 +278,19 @@ void loop()
       digitalWrite(LED_YELLOW_P10, LOW);
       digitalWrite(LED_RED_P10, HIGH);
     }
+    delay(2000);
     if (sensorPm25Status == DANGER && sensorPm10Status == DANGER)
     {
-      digitalWrite(BUZZER_PIN, HIGH);
-      delay(1000);
-      digitalWrite(BUZZER_PIN, LOW);
+      if (runningBuzzer)
+      {
+        digitalWrite(BUZZER_PIN, HIGH);
+        delay(1000);
+        digitalWrite(BUZZER_PIN, LOW);
+      }
+
       lcd.clear();
       lcd.print("DANGER POLLUTION");
       delay(2000);
     }
   }
-  delay(200);
 }
