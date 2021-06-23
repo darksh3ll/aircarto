@@ -15,7 +15,7 @@ bool runningBuzzer = false;
 //
 // ─── DEFINE PIN ─────────────────────────────────────────────────────────────────
 //
-
+#define BUTTON_PIN 7
 #define BUZZER_PIN 4 //buzzer
 #define BAUDRATE 9600
 
@@ -140,6 +140,8 @@ int checkHumidity(int hum)
 void setup()
 {
   Serial.begin(BAUDRATE);
+
+  pinMode(BUTTON_PIN, INPUT);
   //
   // ─── PIN BUZZER ─────────────────────────────────────────────────────────────────────
   //
@@ -199,6 +201,11 @@ void loop()
     Serial.println(SimpleDHTErrDuration(err));
     delay(2000);
     return;
+  };
+
+  if (digitalRead(BUTTON_PIN) == HIGH)
+  {
+    runningBuzzer = !runningBuzzer;
   }
 
   error = my_sds.read(&p25, &p10);
@@ -279,6 +286,7 @@ void loop()
       digitalWrite(LED_RED_P10, HIGH);
     }
     delay(2000);
+
     if (sensorPm25Status == DANGER && sensorPm10Status == DANGER)
     {
       if (runningBuzzer)
