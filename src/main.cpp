@@ -10,10 +10,12 @@
 #include "MHZ19.h"
 #include <SoftwareSerial.h>
 
+bool runningBuzzer = false;
+
 //
 // ─── DEFINE PIN ─────────────────────────────────────────────────────────────────
 //
-
+#define BUTTON_PIN 7
 #define BUZZER_PIN 4 //buzzer
 #define BAUDRATE 9600
 
@@ -38,9 +40,19 @@ int LED_YELLOW_P25 = 24;
 int LED_RED_P25 = 26;
 
 //led pm10
-int LED_GREEN_P10 = 24;
-int LED_YELLOW_P10 = 26;
-int LED_RED_P10 = 28;
+int LED_GREEN_P10 = 28;
+int LED_YELLOW_P10 = 30;
+int LED_RED_P10 = 32;
+
+//led temperature
+int LED_GREEN_TEMPERATURE = 34;
+int LED_YELLOW_TEMPERATURE = 36;
+int LED_RED_TEMPERATURE = 38;
+
+//led HUMLIDITY
+int LED_GREEN_HUMIDITY = 40;
+int LED_YELLOW_HUMIDITY = 42;
+int LED_RED_HUMIDITY = 44;
 
 //
 // ─── ENUM ───────────────────────────────────────────────────────────────────────
@@ -71,15 +83,99 @@ int sensorLevel(int valueGood, int valueFair, int valueReel)
   {
     return DANGER;
   }
+};
+
+//
+// ─── CHECK TEMPERATURE ──────────────────────────────────────────────────────────
+//
+
+int checkTemperature(int temp)
+{
+  if (temp >= 18 && temp <= 22)
+  {
+    digitalWrite(LED_RED_TEMPERATURE, LOW);
+    digitalWrite(LED_YELLOW_TEMPERATURE, LOW);
+    digitalWrite(LED_GREEN_TEMPERATURE, HIGH);
+  }
+  else if (temp >= 16 && temp <= 29)
+  {
+    digitalWrite(LED_RED_TEMPERATURE, LOW);
+    digitalWrite(LED_GREEN_TEMPERATURE, LOW);
+    digitalWrite(LED_YELLOW_TEMPERATURE, HIGH);
+  }
+  else
+  {
+    digitalWrite(LED_GREEN_TEMPERATURE, LOW);
+    digitalWrite(LED_YELLOW_TEMPERATURE, LOW);
+    digitalWrite(LED_RED_TEMPERATURE, HIGH);
+  }
+}
+
+//
+// ─── CHECK HUMIDITY ─────────────────────────────────────────────────────────────
+//
+
+int checkHumidity(int hum)
+{
+  if (hum >= 45 && hum <= 55)
+  {
+    digitalWrite(LED_RED_HUMIDITY, LOW);
+    digitalWrite(LED_YELLOW_HUMIDITY, LOW);
+    digitalWrite(LED_GREEN_HUMIDITY, HIGH);
+  }
+  else if (hum >= 40 && hum <= 44)
+  {
+    digitalWrite(LED_RED_HUMIDITY, LOW);
+    digitalWrite(LED_GREEN_HUMIDITY, LOW);
+    digitalWrite(LED_YELLOW_HUMIDITY, HIGH);
+  }
+  else
+  {
+    digitalWrite(LED_GREEN_HUMIDITY, LOW);
+    digitalWrite(LED_YELLOW_HUMIDITY, LOW);
+    digitalWrite(LED_RED_HUMIDITY, HIGH);
+  }
 }
 
 void setup()
 {
   Serial.begin(BAUDRATE);
+
+  pinMode(BUTTON_PIN, INPUT);
+  //
+  // ─── PIN BUZZER ─────────────────────────────────────────────────────────────────────
+  //
+
   pinMode(BUZZER_PIN, OUTPUT);
+
+  //
+  // ─── PIN LED P25 ────────────────────────────────────────────────────────────────
+  //
+
   pinMode(LED_GREEN_P25, OUTPUT);
   pinMode(LED_YELLOW_P25, OUTPUT);
   pinMode(LED_RED_P25, OUTPUT);
+  //
+  // ─── PIN LED P10 ────────────────────────────────────────────────────────────────
+  //
+
+  pinMode(LED_GREEN_P10, OUTPUT);
+  pinMode(LED_YELLOW_P10, OUTPUT);
+  pinMode(LED_RED_P10, OUTPUT);
+
+  //
+  // ─── PIN LED TEMPERATURE ────────────────────────────────────────────────────────────────
+  //
+  pinMode(LED_GREEN_TEMPERATURE, OUTPUT);
+  pinMode(LED_YELLOW_TEMPERATURE, OUTPUT);
+  pinMode(LED_RED_TEMPERATURE, OUTPUT);
+
+  //
+  // ─── PIN LED HUMIDITY ────────────────────────────────────────────────────────────────
+  //
+  pinMode(LED_GREEN_HUMIDITY, OUTPUT);
+  pinMode(LED_YELLOW_HUMIDITY, OUTPUT);
+  pinMode(LED_RED_HUMIDITY, OUTPUT);
   my_sds.begin(10, 11);
   lcd.init();
   lcd.init();
@@ -105,14 +201,19 @@ void loop()
     Serial.println(SimpleDHTErrDuration(err));
     delay(2000);
     return;
+  };
+
+  if (digitalRead(BUTTON_PIN) == HIGH)
+  {
+    runningBuzzer = !runningBuzzer;
   }
 
   error = my_sds.read(&p25, &p10);
   if (!error)
   {
 
-    Serial.println("P2.5: " + String(p25));
-    Serial.println("P10:  " + String(p10));
+    // Serial.println("P2.5: " + String(p25));
+    // Serial.println("P10:  " + String(p10));
     lcd.setCursor(0, 0);
     lcd.print("PM2.5: " + String(p25, 1) + "(ug/m3)");
     lcd.setCursor(0, 1);
@@ -126,25 +227,78 @@ void loop()
     lcd.setCursor(0, 3);
     lcd.print("CO2:   " + String(100) + " ppm");
 
-    int sensorStatus = sensorLevel(10, 20, p25);
-    if (sensorStatus == GOOD)
+    int sensorPm25Status = sensorLevel(10, 20, p25);
+    int sensorPm10Status = sensorLevel(50, 80, p10);
+
+    //
+    // ─── CHECK TEMPERATURE ──────────────────────────────────────────────────────────
+    //
+
+    checkTemperature(int(temperature));
+    //
+    // ─── CHECK HUMIDITY ──────────────────────────────────────────────────────────
+    //
+    checkHumidity(int(humidity));
+
+    //
+    // ─── SENSORS P25 ─────────────────────────────────────────────────────────
+    //
+
+    if (sensorPm25Status == GOOD)
     {
       digitalWrite(LED_RED_P25, LOW);
       digitalWrite(LED_YELLOW_P25, LOW);
       digitalWrite(LED_GREEN_P25, HIGH);
     };
-    if (sensorStatus == FAIR)
+    if (sensorPm25Status == FAIR)
     {
       digitalWrite(LED_RED_P25, LOW);
       digitalWrite(LED_GREEN_P25, LOW);
       digitalWrite(LED_YELLOW_P25, HIGH);
     };
-    if (sensorStatus == DANGER)
+    if (sensorPm25Status == DANGER)
     {
       digitalWrite(LED_GREEN_P25, LOW);
       digitalWrite(LED_YELLOW_P25, LOW);
       digitalWrite(LED_RED_P25, HIGH);
     }
+
+    //
+    // ───SENSORS P10 ────────────────────────────────────────────────────────────────────────
+    //
+
+    if (sensorPm10Status == GOOD)
+    {
+      digitalWrite(LED_RED_P10, LOW);
+      digitalWrite(LED_YELLOW_P10, LOW);
+      digitalWrite(LED_GREEN_P10, HIGH);
+    };
+    if (sensorPm10Status == FAIR)
+    {
+      digitalWrite(LED_RED_P10, LOW);
+      digitalWrite(LED_GREEN_P10, LOW);
+      digitalWrite(LED_YELLOW_P10, HIGH);
+    };
+    if (sensorPm10Status == DANGER)
+    {
+      digitalWrite(LED_GREEN_P10, LOW);
+      digitalWrite(LED_YELLOW_P10, LOW);
+      digitalWrite(LED_RED_P10, HIGH);
+    }
+    delay(2000);
+
+    if (sensorPm25Status == DANGER && sensorPm10Status == DANGER)
+    {
+      if (runningBuzzer)
+      {
+        digitalWrite(BUZZER_PIN, HIGH);
+        delay(1000);
+        digitalWrite(BUZZER_PIN, LOW);
+      }
+
+      lcd.clear();
+      lcd.print("DANGER POLLUTION");
+      delay(2000);
+    }
   }
-  delay(200);
 }
