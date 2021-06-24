@@ -9,8 +9,17 @@
 #include <SimpleDHT.h>
 #include "MHZ19.h"
 #include <SoftwareSerial.h>
+
+//
+// ─── MHZ19 ──────────────────────────────────────────────────────────────────────
+//
+
+#define RX_PIN 5
+#define TX_PIN 6
 MHZ19 myMHZ19;
+SoftwareSerial mySerial(RX_PIN, TX_PIN);
 bool runningBuzzer = false;
+unsigned long getDataTimer = 0;
 
 //
 // ─── DEFINE PIN ─────────────────────────────────────────────────────────────────
@@ -18,13 +27,6 @@ bool runningBuzzer = false;
 #define BUTTON_PIN 7
 #define BUZZER_PIN 4 //buzzer
 #define BAUDRATE 9600
-
-//
-// ─── MHZ19 ──────────────────────────────────────────────────────────────────────
-//
-
-// #define TX_PIN 18
-// #define RX_PIN 19
 
 //configure capteur DHT11
 int pinDHT11 = 2;
@@ -174,7 +176,7 @@ void checkHumidity(int hum)
 void setup()
 {
 
-  myMHZ19.begin(Serial1);
+  myMHZ19.begin(mySerial);
   myMHZ19.autoCalibration();
 
   Serial.begin(BAUDRATE);
@@ -230,6 +232,27 @@ void loop()
   byte temperature = 0;
   byte humidity = 0;
   int err = SimpleDHTErrSuccess;
+
+  if (millis() - getDataTimer >= 2000)
+  {
+    int CO2;
+
+    /* note: getCO2() default is command "CO2 Unlimited". This returns the correct CO2 reading even
+        if below background CO2 levels or above range (useful to validate sensor). You can use the
+        usual documented command with getCO2(false) */
+
+    CO2 = myMHZ19.getCO2(); // Request CO2 (as ppm)
+
+    Serial.print("CO2 (ppm): ");
+    Serial.println(CO2);
+
+    int8_t Temp;
+    Temp = myMHZ19.getTemperature(); // Request Temperature (as Celsius)
+    Serial.print("Temperature (C): ");
+    Serial.println(Temp);
+
+    getDataTimer = millis();
+  }
 
   if ((err = dht11.read(&temperature, &humidity, NULL)) != SimpleDHTErrSuccess)
   {
