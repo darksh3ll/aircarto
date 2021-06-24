@@ -9,7 +9,7 @@
 #include <SimpleDHT.h>
 #include "MHZ19.h"
 #include <SoftwareSerial.h>
-
+MHZ19 myMHZ19;
 bool runningBuzzer = false;
 
 //
@@ -18,6 +18,13 @@ bool runningBuzzer = false;
 #define BUTTON_PIN 7
 #define BUZZER_PIN 4 //buzzer
 #define BAUDRATE 9600
+
+//
+// ─── MHZ19 ──────────────────────────────────────────────────────────────────────
+//
+
+// #define TX_PIN 18
+// #define RX_PIN 19
 
 //configure capteur DHT11
 int pinDHT11 = 2;
@@ -166,6 +173,10 @@ void checkHumidity(int hum)
 
 void setup()
 {
+
+  myMHZ19.begin(Serial1);
+  myMHZ19.autoCalibration();
+
   Serial.begin(BAUDRATE);
 
   pinMode(BUTTON_PIN, INPUT);
