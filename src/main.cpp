@@ -244,21 +244,32 @@ void loop()
 
     if (sensorPm25Status == GOOD)
     {
-      digitalWrite(LED_RED_P25, LOW);
-      digitalWrite(LED_YELLOW_P25, LOW);
+      // digitalWrite(LED_RED_P25, LOW);
+      // digitalWrite(LED_YELLOW_P25, LOW);
       digitalWrite(LED_GREEN_P25, HIGH);
-    };
+    }
+    else
+    {
+      digitalWrite(LED_GREEN_P25, LOW);
+    }
     if (sensorPm25Status == FAIR)
     {
-      digitalWrite(LED_RED_P25, LOW);
-      digitalWrite(LED_GREEN_P25, LOW);
+
       digitalWrite(LED_YELLOW_P25, HIGH);
-    };
+    }
+    else
+    {
+      digitalWrite(LED_YELLOW_P25, LOW);
+    }
     if (sensorPm25Status == DANGER)
     {
-      digitalWrite(LED_GREEN_P25, LOW);
-      digitalWrite(LED_YELLOW_P25, LOW);
+      // digitalWrite(LED_GREEN_P25, LOW);
+      // digitalWrite(LED_YELLOW_P25, LOW);
       digitalWrite(LED_RED_P25, HIGH);
+    }
+    else
+    {
+      digitalWrite(LED_RED_P25, LOW);
     }
 
     //
